@@ -1,0 +1,27 @@
+net-tools
+htop
+pciutils
+usbutils
+
+# download
+curl
+wget
+
+# archives
+zip
+unzip
+
+# terminal
+zsh
+screen
+tmux
+bash-completion
+
+# encryption
+openssl
+gpg
+
+# development
+gcc
+g++
+
