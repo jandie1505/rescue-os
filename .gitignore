@@ -1,0 +1,12 @@
+live-build/auto/
+live-build/binary/
+live-build/cache/
+live-build/chroot/
+live-build/local/
+live-build/.build/
+
+live-build/binary*
+live-build/chroot*
+live-build/live-image*
+live-build/.lock
+

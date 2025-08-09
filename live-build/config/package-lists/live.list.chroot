@@ -1,0 +1,28 @@
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+
+# live-boot recommends
+live-boot-doc
+live-tools
+rsync
+uuid-runtime
+
+# live-config recommends
+keyboard-configuration
+iproute2
+keyboard-configuration
+console-setup
+live-config-doc
+live-tools
+locales
+locales-all
+sudo
+user-setup
+
+# live-config-systemd recommends
+dbus
+libpam-systemd
+libnss-systemd
+

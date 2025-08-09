@@ -1,0 +1,8 @@
+#!/bin/bash
+systemctl enable getty@tty7
+systemctl enable getty@tty8
+systemctl enable getty@tty9
+systemctl enable getty@tty10
+systemctl enable getty@tty11
+systemctl enable getty@tty12
+
