@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# vscodium
+wget -qO - https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg \
+    | gpg --dearmor \
+    | dd of=/usr/share/keyrings/vscodium-archive-keyring.gpg
+echo 'deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg] https://download.vscodium.com/debs vscodium main' \
+    | tee /etc/apt/sources.list.d/vscodium.list
+apt update && apt install codium -y
+
+# localsend
+wget -O /tmp/localsend.deb https://github.com/localsend/localsend/releases/download/v1.17.0/LocalSend-1.17.0-linux-x86-64.deb
+apt install /tmp/localsend.deb -y
+
+# rescuezilla
+wget -O /tmp/rescuezilla.deb https://github.com/rescuezilla/rescuezilla/releases/download/2.6.1/rescuezilla_2.6.1-1_all.deb
+apt install /tmp/rescuezilla.deb -y
+
+# veracrypt
+wget -O /tmp/veracrypt.deb https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_1.26.24/veracrypt-1.26.24-Debian-12-amd64.deb
+apt install /tmp/veracrypt.deb -y
+

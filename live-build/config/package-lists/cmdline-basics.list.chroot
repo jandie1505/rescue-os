@@ -2,6 +2,8 @@ net-tools
 htop
 pciutils
 usbutils
+kbd
+mesa-utils
 
 # download
 curl
@@ -24,4 +26,7 @@ gpg
 # development
 gcc
 g++
+
+# qemu
+qemu-guest-agent
 
