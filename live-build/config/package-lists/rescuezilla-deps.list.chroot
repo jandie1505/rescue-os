@@ -1,5 +1,4 @@
 partimage
-encryptfs-utils
+ecryptfs-utils
 nbdkit
-python3-whichcraft
 

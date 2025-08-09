@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Change Keyboard Layout
+Comment=
+Exec=sudo change-keyboard-layout
+Icon=input-keyboard
+Path=
+Terminal=true
+StartupNotify=false

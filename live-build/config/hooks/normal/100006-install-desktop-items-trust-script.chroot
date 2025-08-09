@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# create application that trusts the desktop items
+
+mkdir -p /usr/local/bin/
+
+cat <<'EOF' > /usr/local/bin/trust-desktop-items
+#!/bin/bash
+for f in ~/Desktop/*.desktop; do
+    checksum=$(sha256sum "$f" | awk '{print $1}')
+    gio set "$f" metadata::xfce-exe-checksum "$checksum"
+done
+EOF
+
+chmod 755 /usr/local/bin/trust-desktop-items
+
+# create the autostart file
+
+mkdir -p /etc/skel/.config/autostart/
+
+cat <<'EOF' > /etc/skel/.config/autostart/trust-desktop-items.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.9.4
+Type=Application
+Name=Trust Desktop Icons
+Comment=
+Exec=trust-desktop-items
+OnlyShowIn=XFCE
+RunHook=0
+StartupNotify=false
+Terminal=false
+Hidden=false
+EOF
+
+chmod 755 /etc/skel/.config/autostart/trust-desktop-items.desktop
+

@@ -1,2 +1,3 @@
 #!/bin/bash
 sysctl -w kernel.sysrq=1
+

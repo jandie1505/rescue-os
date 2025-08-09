@@ -4,6 +4,7 @@ pciutils
 usbutils
 kbd
 mesa-utils
+libglib2.0-bin
 
 # download
 curl

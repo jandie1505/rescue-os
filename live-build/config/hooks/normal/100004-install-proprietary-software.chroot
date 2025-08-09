@@ -8,7 +8,7 @@ echo "Proprietary sofware packages are enabled."
 
 # VSCode
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
-install -D -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/microsoft.gpg
+install -D -o root -g root -m 644 /tmp/microsoft.gpg /usr/share/keyrings/microsoft.gpg
 rm -f /tmp/microsoft.gpg
 cat <<'EOF' > /etc/apt/sources.list.d/vscode.sources
 Types: deb

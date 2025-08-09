@@ -1,0 +1,16 @@
+#!/bin/bash
+
+mkdir -p /usr/local/bin/
+
+cat <<'EOF' > /usr/local/bin/change-keyboard-layout
+#!/bin/bash
+set -e
+dpkg-reconfigure keyboard-configuration
+setupcon
+service keyboard-setup restart
+udevadm trigger --subsystem-match=input --action=change
+echo "Keyboard layout changed"
+EOF
+
+chmod 755 /usr/local/bin/change-keyboard-layout
+
