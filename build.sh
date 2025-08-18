@@ -8,7 +8,7 @@ lb config \
   --distribution trixie \
   --debian-installer none \
   --binary-images iso-hybrid \
-  --bootappend-live "boot=live components quiet splash noeject toram persistence.read-only" \
+  --bootappend-live "boot=live components quiet splash toram" \
   --linux-flavours amd64
 sudo lb build
 
