@@ -14,8 +14,9 @@ hardinfo2
 conky-all
 dconf-cli
 dconf-editor
-dosbox
 dvdisaster
 dvdisaster-doc
 fsarchiver
+testdisk
+gpart
 
