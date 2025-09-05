@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+# Simple TTY rescue menu for TTY1
+set -u
+export NCURSES_NO_UTF8_ACS=1   # prevents line issues in some ttys
+TERM=${TERM:-linux}
+
+# Helper: Reset terminal safely
+cleanup() {
+  stty sane 2>/dev/null || true
+  tput cnorm 2>/dev/null || true
+}
+trap cleanup EXIT
+
+need_cmd() { command -v "$1" >/dev/null 2>&1; }
+
+# ---- Actions ----
+action_start_de() {
+  clear
+  exec startxfce4
+}
+
+action_root_shell() {
+  clear
+  echo "You're switching to a root shell."
+  echo "You can always go back to this menu by exiting the shell."
+  echo ""
+  echo "Root password: live"
+  echo ""
+  echo "Login as: root"
+  exec su - root
+}
+
+action_change_keyboard() {
+  clear
+  exec sudo change-keyboard-layout
+}
+
+action_network() {
+  whiptail --msgbox "Coming soon..." 10 60
+}
+
+action_logs() {
+  if need_cmd journalctl; then
+    journalctl -xb | less
+  else
+    dmesg | less
+  fi
+}
+
+action_enable_ssh() {
+  whiptail --msgbox "Coming soon..." 10 60
+}
+
+action_power() {
+  CHOICE=$(whiptail --title "Power" --menu "Select action:" 15 50 3 \
+    "1" "Reboot" \
+    "2" "Shut down" \
+    "3" "Go back" 3>&1 1>&2 2>&3) || return
+  case "$CHOICE" in
+    1) "sudo reboot" ;;
+    2) "sudo poweroff" ;;
+    *) ;;
+  esac
+}
+
+action_exit_to_shell() {
+  exec bash
+}
+
+# ---- Main menu loop ----
+while true; do
+  CHOICE=$(whiptail --title "RESCUE OS MENU" --menu "Wähle eine Option" 20 78 12 \
+    "1" "Start desktop environment" \
+    "2" "Switch to root shell" \
+    "3" "Change keyboard layout" \
+    "4" "Netzwerk konfigurieren (nmtui/…)" \
+    "5" "Systemlogs anschauen (journal/dmesg)" \
+    "6" "SSH aktivieren" \
+    "7" "Restart / Shut down" \
+    "8" "Exit to shell" \
+    "9" "Close menu" 3>&1 1>&2 2>&3)
+
+  RET=$?
+  [ $RET -ne 0 ] && break
+
+  case "$CHOICE" in
+    1) 	action_start_de ;;
+    2)  action_root_shell ;;
+    3)  action_change_keyboard ;;
+    4)  action_network ;;
+    5)  action_logs ;;
+    6)  action_enable_ssh ;;
+    7)  action_power ;;
+    8)  action_exit_to_shell ;;
+    9)          break ;;
+  esac
+done
+
+echo "Bye!"
+

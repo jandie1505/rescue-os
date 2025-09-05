@@ -12,12 +12,7 @@ if [ "$(tty)" = "/dev/tty1" ]; then
         # Start desktop environment
         exec startxfce4
     else
-    	# Info message when the desktop environment is not started
-    	echo ""
-	echo "************************************"
-	echo "* To start the desktop environment *"
-	echo "*   use the command 'startxfce4'   *"
-	echo "************************************"
+    	exec tty-menu
     fi
 fi
 
