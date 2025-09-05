@@ -1,0 +1,10 @@
+#!/bin/sh
+
+lb config noauto \
+  --mode debian \
+  --distribution trixie \
+  --debian-installer none \
+  --binary-images iso-hybrid \
+  --bootappend-live "boot=live components quiet splash toram" \
+  --linux-flavours amd64
+
