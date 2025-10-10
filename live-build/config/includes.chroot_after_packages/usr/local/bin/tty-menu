@@ -74,9 +74,9 @@ while true; do
     "1" "Start desktop environment" \
     "2" "Switch to root shell" \
     "3" "Change keyboard layout" \
-    "4" "Netzwerk konfigurieren (nmtui/…)" \
-    "5" "Systemlogs anschauen (journal/dmesg)" \
-    "6" "SSH aktivieren" \
+    "4" "Network configuration" \
+    "5" "Show system logs (journal/dmesg)" \
+    "6" "Enable SSH" \
     "7" "Restart / Shut down" \
     "8" "Exit to shell" \
     "9" "Close menu" 3>&1 1>&2 2>&3)
