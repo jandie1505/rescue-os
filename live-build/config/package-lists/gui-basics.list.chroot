@@ -1,3 +1,7 @@
 firefox-esr
 mousepad
 
+# for keyboard change gui
+debconf-kde-data
+debconf-kde-helper
+kdialog

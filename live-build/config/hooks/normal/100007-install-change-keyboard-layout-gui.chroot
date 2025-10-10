@@ -1,0 +1,16 @@
+#!/bin/bash
+
+mkdir -p /usr/local/bin/
+
+cat <<'EOF' > /usr/local/bin/change-keyboard-layout-gui
+#!/bin/bash
+set -e
+dpkg-reconfigure keyboard-configuration --frontend kde
+setupcon
+service keyboard-setup restart
+udevadm trigger --subsystem-match=input --action=change
+kdialog --title "Info" --msgbox "Keyboard layout changed."
+EOF
+
+chmod 755 /usr/local/bin/change-keyboard-layout-gui
+
