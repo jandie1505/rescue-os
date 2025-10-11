@@ -3,8 +3,8 @@
 # Lockfile directory
 LOCKFILE="/tmp/.desktop_started"
 
-# Check for tty1
-if [ "$(tty)" = "/dev/tty1" ]; then
+# Check for tty1 AND user 'live'
+if [ "$(tty)" = "/dev/tty1" ] && [ "$(whoami)" = "user" ]; then
     # Check for lockfile
     if [ ! -f "$LOCKFILE" ]; then
         # Create lockfile
@@ -12,7 +12,6 @@ if [ "$(tty)" = "/dev/tty1" ]; then
         # Start desktop environment
         exec startxfce4
     else
-    	exec tty-menu
+        exec tty-menu
     fi
 fi
-

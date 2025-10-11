@@ -31,3 +31,6 @@ g++
 # qemu
 qemu-guest-agent
 
+# dialog
+dialog
+

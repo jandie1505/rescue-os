@@ -37,7 +37,7 @@ action_change_keyboard() {
 }
 
 action_network() {
-  whiptail --msgbox "Coming soon..." 10 60
+  dialog --msgbox "Coming soon..." 10 60
 }
 
 action_logs() {
@@ -49,17 +49,17 @@ action_logs() {
 }
 
 action_enable_ssh() {
-  whiptail --msgbox "Coming soon..." 10 60
+  dialog --msgbox "Coming soon..." 10 60
 }
 
 action_power() {
-  CHOICE=$(whiptail --title "Power" --menu "Select action:" 15 50 3 \
-    "1" "Reboot" \
-    "2" "Shut down" \
-    "3" "Go back" 3>&1 1>&2 2>&3) || return
+  CHOICE=$(dialog --title "Power" --menu "Select action:" 15 50 3 \
+    1 "Reboot" \
+    2 "Shut down" \
+    3 "Go back" 3>&1 1>&2 2>&3) || return
   case "$CHOICE" in
-    1) "sudo reboot" ;;
-    2) "sudo poweroff" ;;
+    1) sudo reboot ;;
+    2) sudo poweroff ;;
     *) ;;
   esac
 }
@@ -70,32 +70,32 @@ action_exit_to_shell() {
 
 # ---- Main menu loop ----
 while true; do
-  CHOICE=$(whiptail --title "RESCUE OS MENU" --menu "Wähle eine Option" 20 78 12 \
-    "1" "Start desktop environment" \
-    "2" "Switch to root shell" \
-    "3" "Change keyboard layout" \
-    "4" "Network configuration" \
-    "5" "Show system logs (journal/dmesg)" \
-    "6" "Enable SSH" \
-    "7" "Restart / Shut down" \
-    "8" "Exit to shell" \
-    "9" "Close menu" 3>&1 1>&2 2>&3)
+  CHOICE=$(dialog --title "RESCUE OS MENU" --menu "Choose an option:" 20 78 12 \
+    1 "Start desktop environment" \
+    2 "Switch to root shell" \
+    3 "Change keyboard layout" \
+    4 "Network configuration" \
+    5 "Show system logs (journal/dmesg)" \
+    6 "Enable SSH" \
+    7 "Restart / Shut down" \
+    8 "Exit to shell" \
+    9 "Close menu" 3>&1 1>&2 2>&3)
 
   RET=$?
   [ $RET -ne 0 ] && break
 
   case "$CHOICE" in
-    1) 	action_start_de ;;
-    2)  action_root_shell ;;
-    3)  action_change_keyboard ;;
-    4)  action_network ;;
-    5)  action_logs ;;
-    6)  action_enable_ssh ;;
-    7)  action_power ;;
-    8)  action_exit_to_shell ;;
-    9)          break ;;
+    1) action_start_de ;;
+    2) action_root_shell ;;
+    3) action_change_keyboard ;;
+    4) action_network ;;
+    5) action_logs ;;
+    6) action_enable_ssh ;;
+    7) action_power ;;
+    8) action_exit_to_shell ;;
+    9) break ;;
   esac
 done
 
-echo "Bye!"
+clear
 
