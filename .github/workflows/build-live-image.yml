@@ -1,0 +1,55 @@
+name: Build Debian Live Image
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: "15 2 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive \
+          apt-get install -y \
+            live-build xorriso syslinux-common isolinux ca-certificates git coreutils
+
+      - name: Build ISO
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Verify outputs
+        run: |
+          test -f live-build/live-image-amd64.hybrid.iso
+          ls -lh live-build/live-image-amd64.hybrid.iso
+
+      - name: Create SHA256
+        run: |
+          cd live-build
+          sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
+          cat live-image-amd64.hybrid.iso.sha256
+
+      # Artifact
+      - name: Upload artifact (ephemeral)
+        uses: actions/upload-artifact@v4
+        with:
+          name: rescue-os-iso
+          path: |
+            live-build/live-image-amd64.hybrid.iso
+            live-build/live-image-amd64.hybrid.iso.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
