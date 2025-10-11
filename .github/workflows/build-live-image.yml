@@ -1,10 +1,10 @@
-name: Build Debian Live Image
+name: Build Debian Live (privileged container)
 
 on:
   push:
     branches: [ "main" ]
   schedule:
-    - cron: "15 2 1 * *"
+    - cron: "15 2 1 * *"    # monatlich, 02:15 UTC
   workflow_dispatch:
 
 permissions:
@@ -12,27 +12,38 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest   # ← KEIN "container:" mehr
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive \
-          apt-get install -y --no-install-recommends \
-            live-build xorriso syslinux-common isolinux ca-certificates git coreutils
+      - name: Pull Debian image
+        run: docker pull debian:trixie
 
-      - name: Build ISO
+      - name: Build ISO inside privileged Debian container
         run: |
-          chmod +x ./build.sh
-          sudo ./build.sh         # live-build braucht Root für chroot/mount
+          docker run --rm \
+            --privileged \
+            -v "$PWD":/work \
+            -w /work \
+            --security-opt seccomp=unconfined \
+            debian:trixie bash -euo pipefail -lc '
+              apt-get update
+              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+                live-build xorriso syslinux-common isolinux ca-certificates git coreutils sudo
 
-      - name: Verify + SHA256
+              chmod +x ./build.sh
+              ./build.sh
+
+              test -f live-build/live-image-amd64.hybrid.iso
+            '
+
+      - name: SHA256 & size
         run: |
-          test -f live-build/live-image-amd64.hybrid.iso
+          ls -lh live-build/live-image-amd64.hybrid.iso
           sha256sum live-build/live-image-amd64.hybrid.iso > live-build/live-image-amd64.hybrid.iso.sha256
+          cat live-build/live-image-amd64.hybrid.iso.sha256
 
       # Artifact
       - name: Upload artifact (ephemeral)
