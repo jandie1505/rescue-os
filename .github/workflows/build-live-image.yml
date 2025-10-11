@@ -1,10 +1,10 @@
 name: Build Debian Live (privileged container)
 
 on:
-  push:
-    branches: [ "main" ]
-  schedule:
-    - cron: "15 2 1 * *"    # monatlich, 02:15 UTC
+  #push:
+  #  branches: [ "main" ]
+  #schedule:
+  #  - cron: "15 2 1 * *"    # monatlich, 02:15 UTC
   workflow_dispatch:
 
 permissions:
