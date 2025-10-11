@@ -24,7 +24,7 @@ jobs:
           apt-get update
           DEBIAN_FRONTEND=noninteractive \
           apt-get install -y \
-            live-build xorriso syslinux-common isolinux ca-certificates git coreutils
+            live-build xorriso syslinux-common isolinux ca-certificates git coreutils sudo
 
       - name: Build ISO
         run: |
