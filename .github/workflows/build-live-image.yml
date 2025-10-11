@@ -12,35 +12,27 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    container: debian:trixie
+    runs-on: ubuntu-latest   # ← KEIN "container:" mehr
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install build deps
         run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive \
-          apt-get install -y \
-            live-build xorriso syslinux-common isolinux ca-certificates git coreutils sudo
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive \
+          apt-get install -y --no-install-recommends \
+            live-build xorriso syslinux-common isolinux ca-certificates git coreutils
 
       - name: Build ISO
         run: |
           chmod +x ./build.sh
-          ./build.sh
+          sudo ./build.sh         # live-build braucht Root für chroot/mount
 
-      - name: Verify outputs
+      - name: Verify + SHA256
         run: |
           test -f live-build/live-image-amd64.hybrid.iso
-          ls -lh live-build/live-image-amd64.hybrid.iso
-
-      - name: Create SHA256
-        run: |
-          cd live-build
-          sha256sum live-image-amd64.hybrid.iso > live-image-amd64.hybrid.iso.sha256
-          cat live-image-amd64.hybrid.iso.sha256
+          sha256sum live-build/live-image-amd64.hybrid.iso > live-build/live-image-amd64.hybrid.iso.sha256
 
       # Artifact
       - name: Upload artifact (ephemeral)
