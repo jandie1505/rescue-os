@@ -34,4 +34,6 @@ live-build/config/hooks/normal/9000-remove-gnome-icon-cache.hook.chroot
 live-build/config/hooks/normal/9010-remove-python-pyc.hook.chroot
 live-build/config/hooks/normal/9020-remove-man-cache.hook.chroot
 
+live-build/config/hooks/live/0010-disable-kexec-tools.hook.chroot
+live-build/config/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot
 
