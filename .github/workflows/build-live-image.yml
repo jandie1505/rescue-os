@@ -42,12 +42,6 @@ jobs:
               test -f live-build/live-image-amd64.hybrid.iso
             '
 
-      - name: Rename ISO to release pattern
-        run: |
-          NEWNAME="rescue-os-${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}.iso"
-          mv live-build/live-image-amd64.hybrid.iso "$NEWNAME"
-          echo "NEWNAME=$NEWNAME" >> "$GITHUB_ENV"
-
       - name: SHA256 & size
         run: |
           ls -lh "$NEWNAME"
@@ -65,24 +59,33 @@ jobs:
           compression-level: 0
           retention-days: 1
 
+      - name: Prepare release metadata
+        id: meta
+        shell: bash
+        run: |
+          DATE_UTC="$(date -u +%F)"                # YYYY-MM-DD (UTC)
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "date=${DATE_UTC}" >> "$GITHUB_OUTPUT"
+          echo "tag=${DATE_UTC}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "name=Rescue OS ${DATE_UTC}" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "Automated build on ${DATE_UTC} (UTC)."
+            echo
+            echo "Commit: ${GITHUB_SHA}"
+            echo "Tag: ${DATE_UTC}-${SHORT_SHA}"
+            echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } > body.txt
+          echo "bodyfile=body.txt" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}
-          name: Rescue OS ${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}
-          body: |
-            Automated build of the Debian Live rescue image.
-
-            **Details**
-            - Base image: `debian:trixie`
-            - Source commit: `${{ github.sha }}`
-            - Build date (Europe/Berlin): `${{ steps.meta.outputs.date }}`
-            - The SHA256 checksum is provided as a `.sha256` asset.
-
-            **Filename**
-            - `rescue-os-${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}.iso`
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.name }}
+          body_path: ${{ steps.meta.outputs.bodyfile }}
           draft: false
           prerelease: false
           files: |
-            ${{ env.NEWNAME }}
-            ${{ env.NEWNAME }}.sha256
+            live-build/live-image-amd64.hybrid.iso
+            live-build/live-image-amd64.hybrid.iso.sha256
