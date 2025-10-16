@@ -39,20 +39,47 @@ jobs:
               test -f live-build/live-image-amd64.hybrid.iso
             '
 
+      - name: Rename ISO to release pattern
+        run: |
+          NEWNAME="rescue-os-${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}.iso"
+          mv live-build/live-image-amd64.hybrid.iso "$NEWNAME"
+          echo "NEWNAME=$NEWNAME" >> "$GITHUB_ENV"
+
       - name: SHA256 & size
         run: |
-          ls -lh live-build/live-image-amd64.hybrid.iso
-          sha256sum live-build/live-image-amd64.hybrid.iso > live-build/live-image-amd64.hybrid.iso.sha256
-          cat live-build/live-image-amd64.hybrid.iso.sha256
+          ls -lh "$NEWNAME"
+          sha256sum "$NEWNAME" > "${NEWNAME}.sha256"
+          cat "${NEWNAME}.sha256"
 
-      # Artifact
       - name: Upload artifact (ephemeral)
         uses: actions/upload-artifact@v4
         with:
           name: rescue-os-iso
           path: |
-            live-build/live-image-amd64.hybrid.iso
-            live-build/live-image-amd64.hybrid.iso.sha256
+            ${{ env.NEWNAME }}
+            ${{ env.NEWNAME }}.sha256
           if-no-files-found: error
           compression-level: 0
-          retention-days: 30
+          retention-days: 1
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}
+          name: Rescue OS ${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}
+          body: |
+            Automated build of the Debian Live rescue image.
+
+            **Details**
+            - Base image: `debian:trixie`
+            - Source commit: `${{ github.sha }}`
+            - Build date (Europe/Berlin): `${{ steps.meta.outputs.date }}`
+            - The SHA256 checksum is provided as a `.sha256` asset.
+
+            **Filename**
+            - `rescue-os-${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.short_sha }}.iso`
+          draft: false
+          prerelease: false
+          files: |
+            ${{ env.NEWNAME }}
+            ${{ env.NEWNAME }}.sha256
