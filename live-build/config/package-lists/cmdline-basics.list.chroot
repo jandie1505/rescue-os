@@ -5,6 +5,7 @@ usbutils
 kbd
 mesa-utils
 libglib2.0-bin
+initramfs-tools
 
 # download
 curl
