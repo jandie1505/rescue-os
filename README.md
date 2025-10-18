@@ -3,16 +3,22 @@ Rescue OS is a debian live-build configuration for a rescue OS that runs from RA
 
 It's currently work in progress and might not work as expected.
 
-## How to build
-
-1. Clone a repo on a debian 13 OS.
-2. Run `./build.sh`
-3. The final iso image is generated at `PROJECT_DIR/live-build/live-image-amd64.hybrid.iso`
-
 ## Download
 
 You can download pre-built ISOs on [GitHub Releases](https://github.com/jandie1505/rescue-os/releases/latest).  
 They are automatically built every 2 months with the newest available packages.
+
+## Installation
+
+You can flash the ISO to a USB drive using `sudo dd if=live-image-amd64.hybrid.iso of=/dev/sdX bs=4M oflag=sync status=progress && sync` or a tool like Balena Etcher.
+
+## How to build
+
+1. Clone a repo on a system running [Debian 13 (Trixie)](https://www.debian.org/distrib/).  
+   If you don't use debian on your computer, you can create a Debian VM using QEMU/KVM or VirtualBox.
+3. Run `./build.sh`.  
+   The script only works if `sudo` is available and the current user has root access.
+5. The final iso image is generated at `PROJECT_DIR/live-build/live-image-amd64.hybrid.iso`
 
 ## Disclaimer
 
