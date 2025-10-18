@@ -5,7 +5,7 @@ It's currently work in progress and might not work as expected.
 
 ## Download
 
-You can download pre-built ISOs on [GitHub Releases](https://github.com/jandie1505/rescue-os/releases/latest).  
+You can download pre-built ISOs from [GitHub Releases](https://github.com/jandie1505/rescue-os/releases/latest).  
 They are automatically built every 2 months with the newest available packages.
 
 ## Installation
