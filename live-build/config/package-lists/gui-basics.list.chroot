@@ -5,3 +5,7 @@ mousepad
 debconf-kde-data
 debconf-kde-helper
 kdialog
+
+# firewall ui
+gufw
+

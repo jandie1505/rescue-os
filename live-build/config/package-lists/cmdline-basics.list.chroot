@@ -1,11 +1,3 @@
-net-tools
-htop
-pciutils
-usbutils
-kbd
-mesa-utils
-libglib2.0-bin
-initramfs-tools
 
 # download
 curl
@@ -17,21 +9,38 @@ unzip
 
 # terminal
 zsh
-screen
 tmux
 bash-completion
 
-# encryption
-openssl
-gpg
-
-# development
-gcc
-g++
-
-# qemu
-qemu-guest-agent
-
 # dialog
 dialog
+
+# misc
+htop
+exiftool
+p7zip-full
+unar
+whois
+fio
+
+# rescue and erase
+gddrescue
+foremost
+scalpel
+nwipe
+
+# network
+tcpdump
+mtr
+traceroute
+socat
+iperf3
+openvpn
+
+# clone
+rclone
+
+# android
+android-tools-adb
+android-tools-fastboot
 

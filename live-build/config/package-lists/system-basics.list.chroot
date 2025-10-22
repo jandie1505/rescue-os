@@ -1,0 +1,57 @@
+# SYSTEM BASICS
+
+# devices
+pciutils
+usbutils
+nvme-cli
+bolt
+lsscsi
+sg3-utils
+
+# network
+net-tools
+network-manager
+ethtool
+dnsutils
+iw
+wpasupplicant
+nftables
+rfkill
+ifupdown
+ufw
+wireguard
+wireguard-tools
+
+# idk
+mesa-utils
+libglib2.0-bin
+initramfs-tools
+
+# encryption
+openssl
+gpg
+
+# development
+gcc
+g++
+
+# qemu
+qemu-guest-agent
+
+# input
+kbd
+xinput
+
+# file systems
+btrfs-progs
+xfsprogs
+exfatprogs
+dosfstools
+cryptsetup
+dislocker
+
+# raid
+mdadm
+
+# discs
+udftools
