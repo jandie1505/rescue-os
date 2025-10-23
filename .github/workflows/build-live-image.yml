@@ -58,7 +58,7 @@ jobs:
             live-build/live-image-amd64.hybrid.iso.sha256
           if-no-files-found: error
           compression-level: 0
-          retention-days: 30
+          retention-days: 90
 
       # Release-Metadaten vorbereiten (Name = Datum, Tag = YYYY-MM-DD-<shortsha>, Body englisch)
       - name: Prepare release metadata
