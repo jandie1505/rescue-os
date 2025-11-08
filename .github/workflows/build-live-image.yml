@@ -80,6 +80,15 @@ jobs:
           } > body.txt
           echo "bodyfile=body.txt" >> "$GITHUB_OUTPUT"
 
+      # version.txt mit aktuellem Release-Tag erzeugen
+      - name: Create version file
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ steps.meta.outputs.tag }}
+        run: |
+          echo "${RELEASE_TAG}" > live-build/version.txt
+          cat live-build/version.txt
+
       # Release erstellen & Assets hochladen
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -90,5 +99,41 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            live-build/live-image-amd64.hybrid.iso
             live-build/live-image-amd64.hybrid.iso.sha256
+
+      # SSH-Key einrichten
+      - name: Install SSH key for upload
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.UPLOAD_SERVER_PRIVKEY }}" > ~/.ssh/upload_key
+          chmod 600 ~/.ssh/upload_key
+
+          # Host-Key einsammeln (Hostnamen anpassen!)
+          ssh-keyscan -H ${{ secrets.UPLOAD_SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # ISO + SHA256 + version.txt auf externen Server hochladen
+      - name: Upload ISO, checksum and version to external server (atomic ISO update)
+        shell: bash
+        run: |
+          ISO_LOCAL="live-build/live-image-amd64.hybrid.iso"
+          SHA_LOCAL="live-build/live-image-amd64.hybrid.iso.sha256"
+          VERSION_LOCAL="live-build/version.txt"
+
+          ISO_REMOTE_DIR="/var/www/rescueos-upload"
+          ISO_REMOTE_NAME="live-image-amd64.hybrid.iso"
+          SHA_REMOTE_NAME="live-image-amd64.hybrid.iso.sha256"
+          VERSION_REMOTE_NAME="version.txt"
+
+          ISO_REMOTE_TMP="${ISO_REMOTE_NAME}.tmp"
+
+          # 1. ISO unter temporärem Namen hochladen
+          scp "$ISO_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${ISO_REMOTE_TMP}"
+
+          # 2. Auf dem Server temp -> final atomar umbenennen
+          ssh "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}" \
+            "cd '${ISO_REMOTE_DIR}' && mv '${ISO_REMOTE_TMP}' '${ISO_REMOTE_NAME}'"
+
+          # 3. Checksumme und version.txt aktualisieren (Überschreiben reicht hier)
+          scp "$SHA_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
+          scp "$VERSION_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
