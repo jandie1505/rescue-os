@@ -5,11 +5,9 @@ It's currently work in progress and might not work as expected.
 
 ## Download
 
-~~You can download pre-built ISOs from [GitHub Releases](https://github.com/jandie1505/rescue-os/releases/latest).~~  
+You can download pre-built ISOs from [GitHub Releases](https://github.com/jandie1505/rescue-os/releases/latest).  
 Normally, the ISO is automatically built every 2 months with the newest available packages.  
-But since it's size is larger than 2 GB, I can't store them in GitHub Releases anymore.  
-You can download it from the [last workflow run](https://github.com/jandie1505/rescue-os/actions/runs/18759563411), but you need to be logged in.  
-I'm currently trying to find a better solution.
+You can also download them from the [lastest workflow run](https://github.com/jandie1505/rescue-os/actions/runs/18759563411), but you need to be logged in.  
 
 ## Installation
 
