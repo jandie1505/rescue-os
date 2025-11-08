@@ -27,7 +27,9 @@ You can flash the ISO to a USB drive using `sudo dd if=live-image-amd64.hybrid.i
 
 Note: The LICENSE file applies only to the files in the Git repository.
 The releases / ISO images contain software under various licenses.
-Information about which software is included can be found in the package-lists files and their dependencies.
+Information about which software is included can be found in the package-lists files, their dependencies and the install hook scripts.
+  
+Please note that this is an experimental project, bugs can occur. I am not responsible for any kind of damages.
 
 ```
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
