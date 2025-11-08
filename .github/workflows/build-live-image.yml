@@ -48,7 +48,7 @@ jobs:
           sha256sum live-build/live-image-amd64.hybrid.iso > live-build/live-image-amd64.hybrid.iso.sha256
           cat live-build/live-image-amd64.hybrid.iso.sha256
 
-      # Optional: Ephemeres Artifact (bleibt weiterhin erhalten, falls du es im Actions-Tab brauchst)
+      # Ephemeral artifact
       - name: Upload artifact (ephemeral)
         uses: actions/upload-artifact@v4
         with:
@@ -60,13 +60,16 @@ jobs:
           compression-level: 0
           retention-days: 90
 
-      # Release-Metadaten vorbereiten (Name = Datum, Tag = YYYY-MM-DD-<shortsha>, Body englisch)
+      # Prepare release metadata
       - name: Prepare release metadata
         id: meta
         shell: bash
+        env:
+          ISO_URL: "https://files.chaossquad.net/rescueos/live-image-amd64.hybrid.iso"
         run: |
           DATE_UTC="$(date -u +%F)"                # YYYY-MM-DD (UTC)
           SHORT_SHA="${GITHUB_SHA::7}"
+
           echo "date=${DATE_UTC}" >> "$GITHUB_OUTPUT"
           echo "tag=${DATE_UTC}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           echo "name=Rescue OS ${DATE_UTC}" >> "$GITHUB_OUTPUT"
@@ -74,13 +77,16 @@ jobs:
           {
             echo "Automated build on ${DATE_UTC} (UTC)."
             echo
+            echo "**[Download (latest)](${ISO_URL})**"
+            echo
             echo "Commit: ${GITHUB_SHA}"
             echo "Tag: ${DATE_UTC}-${SHORT_SHA}"
             echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } > body.txt
+
           echo "bodyfile=body.txt" >> "$GITHUB_OUTPUT"
 
-      # version.txt mit aktuellem Release-Tag erzeugen
+      # Create version.txt
       - name: Create version file
         shell: bash
         env:
@@ -101,18 +107,17 @@ jobs:
           files: |
             live-build/live-image-amd64.hybrid.iso.sha256
 
-      # SSH-Key einrichten
+      # Setup SSH key
       - name: Install SSH key for upload
         shell: bash
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.UPLOAD_SERVER_PRIVKEY }}" > ~/.ssh/upload_key
-          chmod 600 ~/.ssh/upload_key
+          echo "${{ secrets.UPLOAD_SERVER_PRIVKEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-          # Host-Key einsammeln (Hostnamen anpassen!)
-          ssh-keyscan -H ${{ secrets.UPLOAD_SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ secrets.UPLOAD_SERVER_HOST }}" >> ~/.ssh/known_hosts
 
-      # ISO + SHA256 + version.txt auf externen Server hochladen
+      # Upload ISO + SHA256 + version.txt
       - name: Upload ISO, checksum and version to external server (atomic ISO update)
         shell: bash
         run: |
@@ -127,13 +132,17 @@ jobs:
 
           ISO_REMOTE_TMP="${ISO_REMOTE_NAME}.tmp"
 
-          # 1. ISO unter temporärem Namen hochladen
-          scp "$ISO_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${ISO_REMOTE_TMP}"
+          # 1. Upload as temporary file
+          scp "$ISO_LOCAL" \
+            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${ISO_REMOTE_TMP}"
 
-          # 2. Auf dem Server temp -> final atomar umbenennen
-          ssh "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}" \
+          # 2. Make uploaded file the new version
+          ssh "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}" \
             "cd '${ISO_REMOTE_DIR}' && mv '${ISO_REMOTE_TMP}' '${ISO_REMOTE_NAME}'"
 
-          # 3. Checksumme und version.txt aktualisieren (Überschreiben reicht hier)
-          scp "$SHA_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
-          scp "$VERSION_LOCAL" "rescueos-upload@${{ secrets.UPLOAD_SERVER_IP }}:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
+          # 3. Update checksum and version.txt
+          scp "$SHA_LOCAL" \
+            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
+
+          scp "$VERSION_LOCAL" \
+            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
