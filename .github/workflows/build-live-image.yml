@@ -77,11 +77,24 @@ jobs:
           {
             echo "Automated build on ${DATE_UTC} (UTC)."
             echo
-            echo "**[Download (latest)](${ISO_URL})**"
-            echo
             echo "Commit: ${GITHUB_SHA}"
             echo "Tag: ${DATE_UTC}-${SHORT_SHA}"
             echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            echo "---"
+            echo
+            echo "**[Download (latest)](${ISO_URL})**"
+            echo
+            echo "Since the file is to large to upload it to GitHub Releases, I had to upload the ISO Image to my own server.  "
+            echo "To save storage, only the latest release is stored. If you click on download on an older release, you are still downloading the newest release.  "
+            echo "You can check the version stored on the server [here](https://files.chaossquad.net/rescueos/version.txt).  "
+            echo "You can verify the ISO image with the .sha256 file attached on this release."
+            echo
+            echo ---
+            echo
+            echo "Please ensure that you have read the [README](https://github.com/jandie1505/rescue-os/blob/main/README.md) before downloading."
+            echo
+
           } > body.txt
 
           echo "bodyfile=body.txt" >> "$GITHUB_OUTPUT"
