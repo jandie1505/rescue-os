@@ -79,9 +79,6 @@ jobs:
           {
             echo "Automated build on ${DATE_UTC} (UTC)."
             echo
-            echo "**[Download (latest)](${ARTIFACT_URL})** (only when logged into GitHub)"
-            echo "[Mirror](${ISO_URL}) (external server, no login required)"
-            echo
             echo "Commit: ${GITHUB_SHA}"
             echo "Tag: ${DATE_UTC}-${SHORT_SHA}"
             echo "Workflow run: [${GITHUB_RUN_ID}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
