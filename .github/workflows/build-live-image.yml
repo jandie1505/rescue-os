@@ -50,6 +50,7 @@ jobs:
 
       # Ephemeral artifact
       - name: Upload artifact (ephemeral)
+        id: artifacts
         uses: actions/upload-artifact@v4
         with:
           name: rescue-os-iso
@@ -66,6 +67,7 @@ jobs:
         shell: bash
         env:
           ISO_URL: "https://files.chaossquad.net/rescueos/live-image-amd64.hybrid.iso"
+          ARTIFACT_URL: ${{ steps.artifacts.outputs.artifact-url }}
         run: |
           DATE_UTC="$(date -u +%F)"                # YYYY-MM-DD (UTC)
           SHORT_SHA="${GITHUB_SHA::7}"
