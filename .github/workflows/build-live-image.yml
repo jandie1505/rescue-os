@@ -79,15 +79,18 @@ jobs:
             echo
             echo "Commit: ${GITHUB_SHA}"
             echo "Tag: ${DATE_UTC}-${SHORT_SHA}"
-            echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Workflow run: [${GITHUB_RUN_ID}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
             echo
             echo "---"
             echo
-            echo "**[Download (latest)](${ISO_URL})**"
+            echo "You can download Rescue OS here:  "
             echo
-            echo "Since the file is to large to upload it to GitHub Releases, I had to upload the ISO Image to my own server.  "
-            echo "To save storage, only the latest release is stored. If you click on download on an older release, you are still downloading the newest release.  "
-            echo "You can check the version stored on the server [here](https://files.chaossquad.net/rescueos/version.txt).  "
+            echo "**[Download (latest)](${ISO_URL})**  "
+            echo "[Download (from GitHub Actions, requires login)](${ARTIFACT_URL})  "
+            echo
+            echo "Since the ISO image is to large to upload it to GitHub Releases, I had to upload it to my own server. It only stores the [latest release](https://github.com/jandie1505/rescue-os/releases/latest).  "
+            echo "You can also download the current release from GitHub Actions, but you need to be signed in on GitHub to do so. If you're not, you'll get an error 404 when you click on that link.  "
+            echo
             echo "You can verify the ISO image with the .sha256 file attached on this release."
             echo
             echo ---
