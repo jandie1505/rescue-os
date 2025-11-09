@@ -9,6 +9,7 @@ dpkg-reconfigure keyboard-configuration --frontend kde
 setupcon
 systemctl restart keyboard-setup
 systemctl restart console-setup
+openvt -c 62 -f -- setupcon
 udevadm trigger --subsystem-match=input --action=change
 kdialog --title "Info" --msgbox "Keyboard layout changed."
 EOF

@@ -8,6 +8,7 @@ set -e
 dpkg-reconfigure keyboard-configuration
 systemctl restart keyboard-setup
 systemctl restart console-setup
+openvt -c 62 -f -- setupcon
 udevadm trigger --subsystem-match=input --action=change
 echo "Keyboard layout changed"
 EOF
