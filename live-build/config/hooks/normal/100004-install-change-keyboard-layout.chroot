@@ -6,8 +6,8 @@ cat <<'EOF' > /usr/local/bin/change-keyboard-layout
 #!/bin/bash
 set -e
 dpkg-reconfigure keyboard-configuration
-setupcon
-service keyboard-setup restart
+systemctl restart keyboard-setup
+systemctl restart console-setup
 udevadm trigger --subsystem-match=input --action=change
 echo "Keyboard layout changed"
 EOF
