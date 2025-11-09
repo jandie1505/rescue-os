@@ -7,7 +7,8 @@ cat <<'EOF' > /usr/local/bin/change-keyboard-layout-gui
 set -e
 dpkg-reconfigure keyboard-configuration --frontend kde
 setupcon
-service keyboard-setup restart
+systemctl restart keyboard-setup
+systemctl restart console-setup
 udevadm trigger --subsystem-match=input --action=change
 kdialog --title "Info" --msgbox "Keyboard layout changed."
 EOF
