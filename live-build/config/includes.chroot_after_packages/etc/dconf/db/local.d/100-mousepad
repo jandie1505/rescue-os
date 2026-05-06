@@ -1,0 +1,20 @@
+[org/xfce/mousepad/preferences/view]
+color-scheme='kate'
+highlight-current-line=true
+match-braces=true
+show-line-endings=false
+show-line-numbers=true
+show-whitespace=false
+
+[org/xfce/mousepad/preferences/window]
+statusbar-visible=true
+toolbar-visible=false
+
+[org/xfce/mousepad/state/search]
+search-history=['highlight', 'classic']
+
+[org/xfce/mousepad/state/window]
+fullscreen=false
+height=uint32 480
+maximized=false
+width=uint32 640
