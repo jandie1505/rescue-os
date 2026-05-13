@@ -59,3 +59,8 @@ udftools
 # SSH
 openssh-server
 libpam-pwdfile
+
+# time
+systemd-timesyncd
+tzdata
+
