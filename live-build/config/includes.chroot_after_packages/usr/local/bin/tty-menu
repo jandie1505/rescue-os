@@ -37,7 +37,7 @@ action_change_keyboard() {
 }
 
 action_network() {
-  dialog --msgbox "Coming soon..." 10 60
+  nmtui
 }
 
 action_logs() {
