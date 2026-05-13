@@ -1,5 +1,6 @@
 #!/bin/bash
 
 ufw allow ssh
+ufw allow 53317/tcp
 ufw enable
 

@@ -49,7 +49,7 @@ action_logs() {
 }
 
 action_enable_ssh() {
-  dialog --msgbox "Coming soon..." 10 60
+  sudo ssh-manager tui
 }
 
 action_power() {
@@ -76,7 +76,7 @@ while true; do
     3 "Change keyboard layout" \
     4 "Network configuration" \
     5 "Show system logs (journal/dmesg)" \
-    6 "Enable SSH" \
+    6 "SSH Server" \
     7 "Restart / Shut down" \
     8 "Exit to shell" \
     9 "Close menu" 3>&1 1>&2 2>&3)

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=SSH Server
+Comment=
+Exec=sudo ssh-manager tui
+Icon=network-server
+Path=
+Terminal=true
+StartupNotify=false

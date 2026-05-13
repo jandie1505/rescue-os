@@ -55,3 +55,7 @@ mdadm
 
 # discs
 udftools
+
+# SSH
+openssh-server
+libpam-pwdfile

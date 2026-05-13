@@ -1,0 +1,207 @@
+#!/bin/bash
+#
+# ssh-manager - control SSH access on the rescue live system
+#
+# Subcommands:
+#   enable               start sshd and generate a new password
+#   disable              stop sshd and remove the password
+#   regenerate-password  generate a new password (sshd must be running)
+#   show-password        print the current SSH password
+#   tui                  interactive dialog UI
+#
+
+set -euo pipefail
+
+SSH_USER="user"
+SSH_SERVICE="ssh.service"
+PWFILE_HASH="/etc/ssh/sshpasswd"
+PWFILE_PLAIN="/run/ssh-password"
+
+# ---------- privilege ----------
+
+if [ "$(id -u)" -ne 0 ]; then
+    exec sudo --preserve-env=TERM "$0" "$@"
+fi
+
+# ---------- core ----------
+
+gen_password() {
+    # 12 chars, alphanumeric without easily confused glyphs (I/l/1/O/0)
+    tr -dc 'A-HJ-NP-Za-km-z2-9' </dev/urandom | head -c 12
+}
+
+write_password() {
+    local pw="$1"
+    local hash
+    hash=$(openssl passwd -6 "$pw")
+
+    umask 077
+    printf '%s:%s\n' "$SSH_USER" "$hash" >"$PWFILE_HASH"
+    chown root:root "$PWFILE_HASH"
+    chmod 600 "$PWFILE_HASH"
+
+    printf '%s\n' "$pw" >"$PWFILE_PLAIN"
+    chmod 644 "$PWFILE_PLAIN"
+}
+
+clear_password() {
+    rm -f "$PWFILE_HASH" "$PWFILE_PLAIN"
+}
+
+is_active() {
+    systemctl is-active --quiet "$SSH_SERVICE"
+}
+
+current_password() {
+    if [ -r "$PWFILE_PLAIN" ]; then
+        cat "$PWFILE_PLAIN"
+    else
+        echo "<unavailable>"
+    fi
+}
+
+regenerate() {
+    local pw
+    pw=$(gen_password)
+    write_password "$pw"
+    printf '%s\n' "$pw"
+}
+
+enable_ssh() {
+    systemctl start "$SSH_SERVICE"
+    regenerate
+}
+
+disable_ssh() {
+    systemctl stop "$SSH_SERVICE"
+    clear_password
+}
+
+# ---------- CLI subcommands ----------
+
+cmd_enable() {
+    if is_active; then
+        echo "SSH is already enabled."
+        echo "Current password: $(current_password)"
+        return 0
+    fi
+    local pw
+    pw=$(enable_ssh)
+    echo "SSH enabled."
+    echo "Password: $pw"
+}
+
+cmd_disable() {
+    if ! is_active; then
+        echo "SSH is already disabled."
+        return 0
+    fi
+    disable_ssh
+    echo "SSH disabled."
+}
+
+cmd_regenerate() {
+    if ! is_active; then
+        echo "Error: SSH is not enabled." >&2
+        exit 1
+    fi
+    local pw
+    pw=$(regenerate)
+    echo "New password: $pw"
+}
+
+cmd_status() {
+    if is_active; then
+        echo "SSH Status: ENABLED" >&2
+        echo "Password: $(current_password)"
+    else
+    	echo "SSH Status: DISABLED"
+    fi
+}
+
+# ---------- TUI ----------
+
+# dialog returns the selected tag on stderr; the 3>&1 1>&2 2>&3 swap
+# captures stderr into the command substitution while keeping the
+# widget visible on the terminal.
+cmd_tui() {
+    if ! command -v dialog >/dev/null; then
+        echo "Error: 'dialog' is not installed." >&2
+        exit 1
+    fi
+
+    while true; do
+        if is_active; then
+            local pw choice msg
+            pw=$(current_password)
+            msg=$(printf 'SSH status: ENABLED.\n\nPassword: %s\n\nChoose an action:' "$pw")
+
+            choice=$(dialog --clear --title "SSH Manager" \
+                --menu "$msg" 15 60 3 \
+                1 "Regenerate Password" \
+                2 "Disable SSH" \
+                3 "Close" \
+                3>&1 1>&2 2>&3) || { clear; return 0; }
+
+            case "$choice" in
+                1)
+                    local new_pw
+                    new_pw=$(regenerate)
+                    dialog --title "Password regenerated" \
+                        --msgbox "$(printf 'New password:\n\n%s' "$new_pw")" 10 50
+                    ;;
+                2)
+                    disable_ssh
+                    dialog --title "SSH disabled" \
+                        --msgbox "SSH has been disabled." 7 40
+                    ;;
+                3)
+                    clear; return 0 ;;
+            esac
+        else
+            local choice
+            choice=$(dialog --clear --title "SSH Manager" \
+                --menu "SSH status: DISABLED." 10 50 2 \
+                1 "Enable SSH" \
+                2 "Close" \
+                3>&1 1>&2 2>&3) || { clear; return 0; }
+
+            case "$choice" in
+                1)
+                    local new_pw
+                    new_pw=$(enable_ssh)
+                    dialog --title "SSH enabled" \
+                        --msgbox "$(printf 'SSH has been enabled.\n\nPassword:\n\n%s' "$new_pw")" 12 50
+                    ;;
+                2)
+                    clear; return 0 ;;
+            esac
+        fi
+    done
+}
+
+# ---------- dispatch ----------
+
+usage() {
+    cat >&2 <<EOF
+Usage: $(basename "$0") <command>
+
+Commands:
+  enable                Start sshd and generate a new password.
+  disable               Stop sshd and remove the password.
+  regenerate-password   Generate a new password (sshd must be running).
+  status         	Print the current SSH password.
+  tui                   Open the interactive terminal UI.
+EOF
+    exit 2
+}
+
+case "${1:-}" in
+    enable)              cmd_enable ;;
+    disable)             cmd_disable ;;
+    regenerate-password) cmd_regenerate ;;
+    status)       	 cmd_status ;;
+    tui)                 cmd_tui ;;
+    -h|--help|help)      usage ;;
+    *)                   usage ;;
+esac
