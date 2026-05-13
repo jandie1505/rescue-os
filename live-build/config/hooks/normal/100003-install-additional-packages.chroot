@@ -37,6 +37,6 @@ EOF
 chmod 755 /usr/share/applications/rescuezilla.desktop
 
 # ----- veracrypt -----
-wget -O /tmp/veracrypt.deb https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_1.26.24/veracrypt-1.26.24-Debian-12-amd64.deb
+wget -O /tmp/veracrypt.deb https://github.com/veracrypt/VeraCrypt/releases/download/VeraCrypt_1.26.24/veracrypt-1.26.24-Debian-13-amd64.deb
 apt install /tmp/veracrypt.deb -y
 
