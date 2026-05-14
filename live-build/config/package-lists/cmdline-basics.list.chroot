@@ -11,6 +11,7 @@ unzip
 zsh
 tmux
 bash-completion
+fish
 
 # dialog
 dialog
@@ -22,6 +23,8 @@ p7zip-full
 unar
 whois
 fio
+psmisc
+fastfetch
 
 # rescue and erase
 gddrescue
