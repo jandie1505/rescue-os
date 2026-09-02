@@ -157,11 +157,13 @@ jobs:
           ISO_LOCAL="live-build/live-image-amd64.hybrid.iso"
           SHA_LOCAL="live-build/live-image-amd64.hybrid.iso.sha256"
           VERSION_LOCAL="live-build/version.txt"
+          README_LOCAL="README.md"
 
           ISO_REMOTE_DIR="/var/www/rescueos-upload"
           ISO_REMOTE_NAME="live-image-amd64.hybrid.iso"
           SHA_REMOTE_NAME="live-image-amd64.hybrid.iso.sha256"
           VERSION_REMOTE_NAME="version.txt"
+          README_REMOTE_NAME="README.md"
 
           ISO_REMOTE_TMP="${ISO_REMOTE_NAME}.tmp"
 
@@ -174,3 +176,4 @@ jobs:
           # 3. Update checksum and version.txt
           scp "$SHA_LOCAL"     "upload:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
           scp "$VERSION_LOCAL" "upload:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
+          scp "$README_LOCAL"  "upload:${ISO_REMOTE_DIR}/${README_REMOTE_NAME}"
