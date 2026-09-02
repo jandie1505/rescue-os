@@ -128,12 +128,27 @@ jobs:
       # Setup SSH key
       - name: Install SSH key for upload
         shell: bash
+        env:
+          SSH_KEY: ${{ secrets.UPLOAD_SERVER_PRIVKEY }}
+          SSH_HOST: ${{ secrets.UPLOAD_SERVER_HOST }}
+          SSH_PORT: ${{ secrets.UPLOAD_SERVER_PORT }}
+          SSH_USER: ${{ secrets.UPLOAD_SERVER_USER }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.UPLOAD_SERVER_PRIVKEY }}" > ~/.ssh/id_rsa
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh-keyscan -H "${{ secrets.UPLOAD_SERVER_HOST }}" >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host upload
+            HostName $SSH_HOST
+            Port $SSH_PORT
+            User $SSH_USER
+            IdentityFile ~/.ssh/id_rsa
+            IdentitiesOnly yes
+          EOF
+          chmod 600 ~/.ssh/config
+
+          ssh-keyscan -H -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
 
       # Upload ISO + SHA256 + version.txt
       - name: Upload ISO, checksum and version to external server (atomic ISO update)
@@ -151,16 +166,11 @@ jobs:
           ISO_REMOTE_TMP="${ISO_REMOTE_NAME}.tmp"
 
           # 1. Upload as temporary file
-          scp "$ISO_LOCAL" \
-            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${ISO_REMOTE_TMP}"
+          scp "$ISO_LOCAL" "upload:${ISO_REMOTE_DIR}/${ISO_REMOTE_TMP}"
 
           # 2. Make uploaded file the new version
-          ssh "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}" \
-            "cd '${ISO_REMOTE_DIR}' && mv '${ISO_REMOTE_TMP}' '${ISO_REMOTE_NAME}'"
+          ssh upload "cd '${ISO_REMOTE_DIR}' && mv '${ISO_REMOTE_TMP}' '${ISO_REMOTE_NAME}'"
 
           # 3. Update checksum and version.txt
-          scp "$SHA_LOCAL" \
-            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
-
-          scp "$VERSION_LOCAL" \
-            "${{ secrets.UPLOAD_SERVER_USER }}@${{ secrets.UPLOAD_SERVER_HOST }}:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
+          scp "$SHA_LOCAL"     "upload:${ISO_REMOTE_DIR}/${SHA_REMOTE_NAME}"
+          scp "$VERSION_LOCAL" "upload:${ISO_REMOTE_DIR}/${VERSION_REMOTE_NAME}"
