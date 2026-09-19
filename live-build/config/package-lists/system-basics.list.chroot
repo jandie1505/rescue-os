@@ -64,3 +64,14 @@ libpam-pwdfile
 systemd-timesyncd
 tzdata
 
+# audio
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+libspa-0.2-bluetooth
+rtkit
+alsa-utils
+alsa-ucm-conf
+alsa-topology-conf
+
