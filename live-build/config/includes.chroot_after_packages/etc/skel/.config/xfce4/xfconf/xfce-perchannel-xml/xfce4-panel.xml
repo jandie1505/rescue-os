@@ -26,12 +26,13 @@
         <value type="int" value="15"/>
         <value type="int" value="16"/>
         <value type="int" value="6"/>
+        <value type="int" value="11"/>
+        <value type="int" value="17"/>
         <value type="int" value="7"/>
         <value type="int" value="8"/>
         <value type="int" value="9"/>
         <value type="int" value="10"/>
         <value type="int" value="18"/>
-        <value type="int" value="17"/>
       </property>
     </property>
   </property>
@@ -60,6 +61,7 @@
         <value type="string" value="rZKh_WVyGH"/>
       </property>
       <property name="known-legacy-items" type="array">
+        <value type="string" value="ethernet network connection “wired connection 1” active"/>
         <value type="string" value="no network connection"/>
       </property>
     </property>
@@ -102,6 +104,9 @@
     <property name="plugin-17" type="string" value="battery"/>
     <property name="plugin-18" type="string" value="separator">
       <property name="style" type="uint" value="0"/>
+    </property>
+    <property name="plugin-11" type="string" value="pulseaudio">
+      <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
     </property>
   </property>
 </channel>
